@@ -1,0 +1,9 @@
+version: '3'
+
+tasks:
+  prep_env:
+    cmds:
+      - poetry install
+      - poetry run pre-commit install
+      - poetry run pre-commit install --hook-type prepare-commit-msg
+      - poetry shell

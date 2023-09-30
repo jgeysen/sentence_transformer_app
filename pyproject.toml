@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "sentence_transformer_app"
+version = "0.1.0"
+description = "A sentence vector generator application."
+authors = ["Jori Geysen <jorigeysen@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "3.9.17"
+sentence-transformers = "2.2.2"                  # Apache 2.0
+torch = "1.13.1"                                 # BSD-3
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.2"                                # MIT
+black = "^23.9.1"                                # MIT
+pre-commit = "^3.4.0"                            # MIT
+ruff = "^0.0.291"                                # MIT
+mypy = "^1.5.1"                                  # MIT
+pytest-cov = "^4.1.0"                            # MIT
+pytest-emoji = "^0.2.0"                          # MIT
+isort = "^5.12.0"                                # MIT
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.isort]
+profile = "black"
