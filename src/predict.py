@@ -1,34 +1,39 @@
+"""Module for executing the prediction step."""
+from typing import Any, List
+
 from sentence_transformers import SentenceTransformer
-from sentence_transformers.util import cos_sim, isclose
-from torch import tensor
 
-# my notebook is running 3.9.17 with sentence-transformers 2.2.2 torch==1.13.1
-# copied these cells from my notebook - its a sentence transformer trained for
-# sentence similarity with predict function and some data checks
+from src.data_loader import load_model, load_page_mapping, load_sentences
 
 
-def encode(samples):
-    x = []
-    model = SentenceTransformer(
-        "/home/user12345/workspace/problemX/retriever_v6_20230901"
+def predict(doc_id: str) -> List[dict[str, Any]]:
+    """
+    Perform prediction on the given doc_id.
+
+    Arguments:
+        doc_id:
+
+    Returns:
+        List[dict[str, Any]]:
+    """
+    sentences: List[dict[str, Any]] = load_sentences(doc_id=doc_id)
+    page_mapping: dict[str, int] = load_page_mapping(doc_id=doc_id)
+    model: SentenceTransformer = load_model()
+
+    sentences = sentences[:100]  # there's 3519 sentences in the original dataset
+
+    texts = [sentence["text"] for sentence in sentences]
+    encodings = model.encode(
+        sentences=texts,
+        show_progress_bar=True,
+        # convert_to_tensor=True
     )
-    for s in samples:
-        # not sure how to handle if the input is greater than the max input sequence
-        # length
-        vec = model.encode([s])[0]
-        x.append(vec)
-    return x
 
-
-# a "data test"
-
-embs = encode(["a", "a", "b"])
-# if we normalise these embeddings maybe this might speed it up on large scale using
-# dot product?
-same_cos = cos_sim(embs[0], embs[1])
-diff_cos = cos_sim(embs[0], embs[2])
-# why does this have a rounding error - shouldn't this be determinstic?
-assert isclose(same_cos, tensor(1.0000))
-
-assert diff_cos < same_cos
-print(same_cos, diff_cos)
+    result = [None] * len(sentences)
+    for idx, sentence in enumerate(sentences):
+        text = sentence["text"]
+        pages_uuid = sentence["pages"]
+        pages_int = [page_mapping[uuid] for uuid in pages_uuid]
+        encoding = encodings[idx]
+        result[idx] = {"text": text, "vector": encoding.shape, "pages": pages_int}
+    return result

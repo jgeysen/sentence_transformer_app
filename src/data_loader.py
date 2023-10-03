@@ -1,7 +1,7 @@
 """Module holding methods to load data and models."""
 import csv
 import json
-from typing import List
+from typing import Any, List
 
 from sentence_transformers import SentenceTransformer
 
@@ -10,7 +10,7 @@ from src.settings import Settings
 
 def load_sentences(
     doc_id: str, settings: Settings = Settings()
-) -> List[dict[str, str]]:
+) -> List[dict[str, Any]]:
     """
     Load sentence data from the data folder.
 
