@@ -8,6 +8,7 @@ authors = ["Jori Geysen <jorigeysen@gmail.com>"]
 python = "3.9.17"
 sentence-transformers = "2.2.2"                  # Apache 2.0
 torch = "1.13.1"                                 # BSD-3
+pydantic-settings = "^2.0.3"                     # MIT
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.2"                                # MIT
