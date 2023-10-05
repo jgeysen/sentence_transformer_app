@@ -7,5 +7,4 @@ class Settings(BaseSettings):
         env_file = ".env"
         case_sensitive = False
 
-    DATA_LOCATION: str
-    MODEL_NAME: str = "custom_model"
+    DATA_LOCATION: str = "/project/data"

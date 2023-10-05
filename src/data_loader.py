@@ -24,8 +24,8 @@ def load_sentences(
             is represented as a dict with keys "text", which is a string, and "pages",
             which is a list of UUID's.
     """
-    text_location = settings.DATA_LOCATION
-    with open(f"{text_location}/texts_{doc_id}.json", "r") as file:
+    data_location = settings.DATA_LOCATION
+    with open(f"{data_location}/texts_{doc_id}.json", "r") as file:
         data = json.load(file)
     return data
 
@@ -59,5 +59,4 @@ def load_model(settings: Settings = Settings()) -> SentenceTransformer:
             SentenceTransformer: sentence transformer model.
     """
     data_location = settings.DATA_LOCATION
-    model_name = settings.MODEL_NAME
-    return SentenceTransformer(f"{data_location}/models/{model_name}")
+    return SentenceTransformer(f"{data_location}/model")

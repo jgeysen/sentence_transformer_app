@@ -11,3 +11,9 @@ tests
 poetry.toml
 README.md
 Dockerfile
+.idea
+.default_env
+docker-compose.yml
+*.tar.gz
+data/
+.dockerignore

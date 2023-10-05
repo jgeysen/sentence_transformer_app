@@ -7,23 +7,25 @@ tasks:
       - poetry run pre-commit install
       - poetry shell
 
-  build_prod_image:
+  build_image:
     vars:
-      PROD_TAG:
+      TAG:
         sh: echo dev-$(shasum -a 256 poetry.lock Dockerfile | shasum -a 256 | cut -c1-8)
     cmds:
-      - docker build --target prod_image -t 9fin_projects/sentence_transformer:{{.PROD_TAG}} .
+      - docker build --target base_image -t 9fin_projects/sentence_transformer:{{.TAG}} .
 
-  prod_up:
+  run_script:
     vars:
-      PROD_TAG:
+      TAG:
         sh: echo dev-$(shasum -a 256 poetry.lock Dockerfile | shasum -a 256 | cut -c1-8)
     cmds:
-      - PROD_TAG={{.PROD_TAG}} docker compose up -d
+      - TAG={{.TAG}} docker compose up -d
+      - docker logs -f 9fin-sentence-transformer
+      - TAG={{.TAG}} docker compose down
 
-  prod_down:
+  stop_container:
     vars:
-      PROD_TAG:
+      TAG:
         sh: echo dev-$(shasum -a 256 poetry.lock Dockerfile | shasum -a 256 | cut -c1-8)
     cmds:
-      - PROD_TAG={{.PROD_TAG}} docker compose down
+      - TAG={{.TAG}} docker compose down

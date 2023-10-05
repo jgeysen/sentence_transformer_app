@@ -3,6 +3,7 @@ name = "sentence_transformer_app"
 version = "0.1.0"
 description = "A sentence vector generator application."
 authors = ["Jori Geysen <jorigeysen@gmail.com>"]
+packages = [{include = "src"}]
 
 [tool.poetry.dependencies]
 python = "3.9.17"
