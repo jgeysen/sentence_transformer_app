@@ -5,5 +5,25 @@ tasks:
     cmds:
       - poetry install
       - poetry run pre-commit install
-      - poetry run pre-commit install --hook-type prepare-commit-msg
       - poetry shell
+
+  build_prod_image:
+    vars:
+      PROD_TAG:
+        sh: echo dev-$(shasum -a 256 poetry.lock Dockerfile | shasum -a 256 | cut -c1-8)
+    cmds:
+      - docker build --target prod_image -t 9fin_projects/sentence_transformer:{{.PROD_TAG}} .
+
+  prod_up:
+    vars:
+      PROD_TAG:
+        sh: echo dev-$(shasum -a 256 poetry.lock Dockerfile | shasum -a 256 | cut -c1-8)
+    cmds:
+      - PROD_TAG={{.PROD_TAG}} docker compose up -d
+
+  prod_down:
+    vars:
+      PROD_TAG:
+        sh: echo dev-$(shasum -a 256 poetry.lock Dockerfile | shasum -a 256 | cut -c1-8)
+    cmds:
+      - PROD_TAG={{.PROD_TAG}} docker compose down

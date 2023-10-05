@@ -1,0 +1,13 @@
+.env
+.gitignore
+.gitattributes
+.git
+.venv
+.pre-commit-config.yaml
+Taskfile.yml
+tests
+.ruff_cache
+*/__pycache__
+poetry.toml
+README.md
+Dockerfile

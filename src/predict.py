@@ -20,13 +20,12 @@ def predict(doc_id: str) -> List[dict[str, Any]]:
     page_mapping: dict[str, int] = load_page_mapping(doc_id=doc_id)
     model: SentenceTransformer = load_model()
 
-    sentences = sentences[:100]  # there's 3519 sentences in the original dataset
-
+    sentences = sentences[:10]  # there's 3519 sentences in the original dataset
     texts = [sentence["text"] for sentence in sentences]
     encodings = model.encode(
         sentences=texts,
         show_progress_bar=True,
-        # convert_to_tensor=True
+        batch_size=10,
     )
 
     result = [None] * len(sentences)
@@ -37,3 +36,9 @@ def predict(doc_id: str) -> List[dict[str, Any]]:
         encoding = encodings[idx]
         result[idx] = {"text": text, "vector": encoding.shape, "pages": pages_int}
     return result
+
+
+if __name__ == "__main__":
+    doc_id = "12345"
+    x = predict(doc_id)
+    print(x)

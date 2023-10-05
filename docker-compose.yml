@@ -1,0 +1,21 @@
+version: "3.5"
+services:
+
+  9fin-sentence-transformer:
+    image: 9fin_projects/sentence_transformer:${PROD_TAG}
+    container_name: 9fin-sentence-transformer
+    command: python src/predict.py
+    environment:
+      - DATA_LOCATION=/project/data
+      - MODEL_NAME=custom_model
+    volumes:
+      - type: bind
+        source: ./data
+        target: /project/data
+      - type: bind
+        source: ./src
+        target: /project/src
+
+networks:
+  default:
+    driver: bridge
