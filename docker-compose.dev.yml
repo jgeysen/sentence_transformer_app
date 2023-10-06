@@ -1,0 +1,18 @@
+version: "3.5"
+services:
+
+  9fin-sentence-transformer-tests:
+    image: 9fin_projects/sentence_transformer:${DEV_TAG}
+    container_name: 9fin-sentence-transformer-tests
+    command: coverage run -m pytest tests --emoji --junitxml=report.xml
+    volumes:
+      - type: bind
+        source: ./src
+        target: /project/src
+      - type: bind
+        source: ./tests
+        target: /project/tests
+
+networks:
+  default:
+    driver: bridge

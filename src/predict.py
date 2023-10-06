@@ -2,6 +2,7 @@
 import logging
 from typing import Any, List
 
+import torch
 from sentence_transformers import SentenceTransformer
 
 from src.data_loader import load_model, load_page_mapping, load_sentences
@@ -21,34 +22,44 @@ def predict(doc_id: str) -> List[dict[str, Any]]:
     Perform prediction on the given doc_id.
 
     Arguments:
-        doc_id:
+        doc_id: id of the document.
 
     Returns:
-        List[dict[str, Any]]:
+        List[dict[str, Any]]: a list of dictionaries, holding the text, the
+        torch vector and the pages for each sentence.
     """
     logger.info(f"Started inference for document {doc_id}.")
 
-    sentences: List[dict[str, Any]] = load_sentences(doc_id=doc_id)
+    sentence_data: List[dict[str, Any]] = load_sentences(doc_id=doc_id)
     page_mapping: dict[str, int] = load_page_mapping(doc_id=doc_id)
     model: SentenceTransformer = load_model()
 
     logger.info(
         f"Model and data successfully loaded for document {doc_id}. "
-        f"Document {doc_id} contains {len(sentences)} sentences."
+        f"Document {doc_id} contains {len(sentence_data)} sentences."
     )
-    logger.info("Starting inference step now, this can take a while.")
 
-    texts = [sentence["text"] for sentence in sentences]
+    if torch.cuda.is_available():
+        model.to("cuda")
+        logger.info("Using GPU for inference.")
+    else:
+        logger.info(
+            "There is no GPU available on your instance/container. "
+            "Continuing with CPU. Inference step might be slow."
+        )
+
+    logger.info("Starting inference step.")
+
+    sentences: List[str] = [sentence["text"] for sentence in sentence_data]
     encodings = model.encode(
-        sentences=texts,
+        sentences=sentences,
         show_progress_bar=True,
-        batch_size=10,
     )
 
     logger.info(f"Inference step for document {doc_id} successfully done.")
 
-    for idx, sentence in enumerate(sentences):
+    for idx, sentence in enumerate(sentence_data):
         sentence["vector"] = encodings[idx]
         sentence["pages"] = [page_mapping[uuid] for uuid in sentence["pages"]]
 
-    return sentences
+    return sentence_data

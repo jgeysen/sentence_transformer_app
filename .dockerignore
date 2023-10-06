@@ -14,6 +14,7 @@ Dockerfile
 .idea
 .default_env
 docker-compose.yml
+docker-compose.dev.yml
 *.tar.gz
 data/
 .dockerignore

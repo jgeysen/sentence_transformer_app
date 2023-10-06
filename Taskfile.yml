@@ -1,5 +1,8 @@
 version: '3'
 
+env:
+  DOCKER_REPOSITORY: 9fin_projects/sentence_transformer
+
 tasks:
   prep_env:
     cmds:
@@ -10,14 +13,14 @@ tasks:
   build_image:
     vars:
       TAG:
-        sh: echo dev-$(shasum -a 256 poetry.lock Dockerfile | shasum -a 256 | cut -c1-8)
+        sh: echo prod-$(shasum -a 256 poetry.lock Dockerfile | shasum -a 256 | cut -c1-8)
     cmds:
-      - docker build --target base_image -t 9fin_projects/sentence_transformer:{{.TAG}} .
+      - docker build --target base_image -t ${DOCKER_REPOSITORY}:{{.TAG}} .
 
   run_script:
     vars:
       TAG:
-        sh: echo dev-$(shasum -a 256 poetry.lock Dockerfile | shasum -a 256 | cut -c1-8)
+        sh: echo prod-$(shasum -a 256 poetry.lock Dockerfile | shasum -a 256 | cut -c1-8)
     cmds:
       - TAG={{.TAG}} docker compose up -d
       - docker logs -f 9fin-sentence-transformer
@@ -26,6 +29,20 @@ tasks:
   stop_container:
     vars:
       TAG:
-        sh: echo dev-$(shasum -a 256 poetry.lock Dockerfile | shasum -a 256 | cut -c1-8)
+        sh: echo prod-$(shasum -a 256 poetry.lock Dockerfile | shasum -a 256 | cut -c1-8)
     cmds:
       - TAG={{.TAG}} docker compose down
+
+  build_dev_image:
+    vars:
+      DEV_TAG:
+        sh: echo dev-$(shasum -a 256 poetry.lock Dockerfile | shasum -a 256 | cut -c1-8)
+    cmds:
+      - docker build --target dev_image -t ${DOCKER_REPOSITORY}:{{.DEV_TAG}} .
+
+  run_tests:
+    vars:
+      DEV_TAG:
+        sh: echo dev-$(shasum -a 256 poetry.lock Dockerfile | shasum -a 256 | cut -c1-8)
+    cmds:
+      - COMPOSE_FILE="docker-compose.dev.yml" DEV_TAG={{.DEV_TAG}} docker compose up

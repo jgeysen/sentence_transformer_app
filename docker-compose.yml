@@ -7,13 +7,17 @@ services:
     command: python ./script.py
     environment:
       - DATA_LOCATION=/project/data
+#    deploy:
+#      resources:
+#        reservations:
+#          devices:
+#            - driver: nvidia
+#              count: 1
+#              capabilities: [ gpu ]
     volumes:
       - type: bind
         source: ./data
         target: /project/data
-      - type: bind
-        source: ./src
-        target: /project/src
 
 networks:
   default:
